@@ -1,18 +1,18 @@
 
 # coding: utf-8
 
-# In[1]:
+# In[11]:
 
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D, Activation
+from keras.layers import Conv2D, MaxPooling2D, Activation, BatchNormalization
 from keras.callbacks import EarlyStopping
 from keras.preprocessing.image import ImageDataGenerator
 
 
 
-# In[2]:
+# In[12]:
 
 img_rows, img_cols, channels = 64, 64, 3
 input_shape = (img_rows, img_cols, channels)
@@ -22,24 +22,27 @@ samples= 170
 epochs=50
 
 
-# In[3]:
+# In[13]:
 
 model = Sequential()
 
 
-# In[4]:
+# In[14]:
 
 model.add(Conv2D(32, (3, 3), input_shape=input_shape))
 model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(BatchNormalization())
 
 model.add(Conv2D(32, (3, 3)))
 model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(BatchNormalization())
 
 model.add(Conv2D(64, (3, 3)))
 model.add(Activation("relu"))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(BatchNormalization())
 
 model.add(Flatten())
 
@@ -48,20 +51,20 @@ model.add(Activation("relu"))
 model.add(Dropout(0.5))
 
 
-# In[5]:
+# In[15]:
 
 model.add(Dense(classes))
 model.add(Activation("softmax"))
 
 
-# In[6]:
+# In[16]:
 
 model.compile(loss="categorical_crossentropy",
              optimizer="adam",
              metrics=["accuracy"])
 
 
-# In[7]:
+# In[17]:
 
 train_datagen = ImageDataGenerator(
     rescale=1.0/255,
@@ -73,7 +76,7 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(rescale=1.0/255)
 
 
-# In[8]:
+# In[18]:
 
 train_generator = train_datagen.flow_from_directory(
     directory="../input/train",
@@ -91,18 +94,18 @@ validation_generator = test_datagen.flow_from_directory(
         class_mode='categorical')
 
 
-# In[9]:
+# In[19]:
 
 early_stopping = EarlyStopping(monitor="val_loss", patience=10)
 
 
-# In[10]:
+# In[20]:
 
 model.fit_generator(train_generator,
-                   steps_per_epoch=2000,
+                   steps_per_epoch=5000,
                    epochs=epochs,
                     validation_data=validation_generator,
-                    validation_steps=120,
+                    validation_steps=400,
                     callbacks=[early_stopping]
                    )
 
