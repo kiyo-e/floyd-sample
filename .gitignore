@@ -1,3 +1,5 @@
 .floyddata
 */input/*
 .floydexpt
+.floydignore
+**/.ipynb_checkpoints/*
